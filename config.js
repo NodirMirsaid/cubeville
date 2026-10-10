@@ -1,2 +1,1 @@
-// Fill in after creating the Supabase project (see SETUP.md). Leave empty to play offline.
-window.CUBEVILLE_CONFIG={url:"",anonKey:""};
+window.CUBEVILLE_CONFIG={url:"https://pvzdaswbruymzkmxdvwb.supabase.co",anonKey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emRhc3dicnV5bXprbXhkdndiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MTU4ODksImV4cCI6MjEwNzE5MTg4OX0.xWv6u6VxE1yZVnHwHgwJjohahw96Jg_PkZL6DqCkul0"};
