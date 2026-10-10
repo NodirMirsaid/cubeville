@@ -25,8 +25,9 @@ head=('<!doctype html><html lang="ru"><head><meta charset="utf-8">'
       '<meta name="apple-mobile-web-app-title" content="Cubeville">'
       '<style>html,body{margin:0;height:100%}:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>'
       '</head><body>')
-libs=('<script src="config.js"></script>'
-      '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>')
+V='2'  # bump on every release so phones don't keep an old cached copy
+libs=(f'<script src="config.js?v={V}"></script>'
+      f'<script src="supabase.js?v={V}"></script>')  # supabase-js 2.45.4 UMD, self-hosted (CDN may be blocked)
 i=game.index('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/')
 out=head+game[:i]+libs+game[i:]+'</body></html>'
 (root/'site').mkdir(exist_ok=True)

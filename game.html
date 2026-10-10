@@ -2617,6 +2617,7 @@ async function netInit(){
     else openLogin();
     return;
   }
+  if(cfg&&cfg.url)toast('Нет связи с сервером. Обнови страницу 🔄');
   await netStart('room');
 }
 

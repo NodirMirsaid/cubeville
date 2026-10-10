@@ -309,7 +309,7 @@ html,body{color:#fff}
   <div id="loading"><div>Cubeville</div><div style="font:800 15px var(--f-body);text-shadow:none">Строим кубики…</div></div>
 </div>
 
-<script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="config.js?v=2"></script><script src="supabase.js?v=2"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -2617,6 +2617,7 @@ async function netInit(){
     else openLogin();
     return;
   }
+  if(cfg&&cfg.url)toast('Нет связи с сервером. Обнови страницу 🔄');
   await netStart('room');
 }
 
