@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Cubeville</string>
+    <string name="title_activity_main">Cubeville</string>
+    <string name="package_name">uz.nodir.cubeville</string>
+    <string name="custom_url_scheme">uz.nodir.cubeville</string>
+</resources>

@@ -1,0 +1,23 @@
+{
+  "appId": "uz.nodir.cubeville",
+  "appName": "Cubeville",
+  "webDir": "www",
+  "backgroundColor": "#232527",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#232527",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "android": {
+    "backgroundColor": "#232527",
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "launchAutoHide": true,
+      "backgroundColor": "#232527",
+      "showSpinner": false
+    }
+  }
+}

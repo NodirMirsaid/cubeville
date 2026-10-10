@@ -1,0 +1,63 @@
+# Cloud builds of the Cubeville app for the App Store and Google Play.
+# Setup steps: STORE-GUIDE.md. The game itself lives in game.html; app/make_www.py bundles it.
+
+workflows:
+  ios-release:
+    name: iOS → TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: codemagic          # App Store Connect API key added in Codemagic → Team → Integrations
+    environment:
+      node: 22
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: uz.nodir.cubeville
+      vars:
+        XCODE_PROJECT: app/ios/App/App.xcodeproj
+        XCODE_SCHEME: App
+        APP_STORE_APPLE_ID: 0               # replace with the app's numeric Apple ID (App Store Connect → App Information)
+    scripts:
+      - name: Bundle the game
+        script: cd app && npm ci && python3 make_www.py && npx cap sync ios
+      - name: Signing profiles
+        script: xcode-project use-profiles
+      - name: Build number
+        script: |
+          LATEST=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          TF=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          N=$(( (LATEST > TF ? LATEST : TF) + 1 ))
+          cd app/ios/App && agvtool new-version -all $N
+      - name: Build IPA
+        script: xcode-project build-ipa --project "$XCODE_PROJECT" --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  android-release:
+    name: Android → Google Play (internal testing)
+    instance_type: linux_x2
+    max_build_duration: 45
+    environment:
+      node: 22
+      java: 21
+      android_signing:
+        - cubeville_upload                  # keystore uploaded in Codemagic → Team → Code signing identities
+      groups:
+        - google_play                       # holds GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+    scripts:
+      - name: Bundle the game
+        script: cd app && npm ci && python3 make_www.py && npx cap sync android
+      - name: Build AAB
+        script: cd app/android && chmod +x gradlew && ./gradlew bundleRelease
+    artifacts:
+      - app/android/app/build/outputs/bundle/release/*.aab
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true

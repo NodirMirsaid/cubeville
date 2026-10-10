@@ -1,0 +1,22 @@
+{
+  "name": "cubeville-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cubeville native wrapper (iOS + Android) via Capacitor",
+  "scripts": {
+    "www": "python3 make_www.py",
+    "sync": "python3 make_www.py && npx cap sync"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3",
+    "@capacitor/splash-screen": "^8.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.3",
+    "@fontsource/montserrat": "^5.3.0",
+    "three": "^0.128.0"
+  }
+}

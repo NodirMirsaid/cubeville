@@ -1500,7 +1500,7 @@ function setHud(def){
 document.addEventListener('click',e=>{
   const u=e.target.closest('[data-ui]');if(!u)return;sfx('click');
   const a=u.dataset.ui;
-  if(a==='games')openGames();else if(a==='wardrobe')openWardrobe();else if(a==='parents')openParents();else if(a==='exit')goHub();else if(a==='jobs')openJobs();else if(a==='items')openItems();
+  if(a==='games')openGames();else if(a==='wardrobe')openWardrobe();else if(a==='parents')parentGate(openParents);else if(a==='exit')goHub();else if(a==='jobs')openJobs();else if(a==='items')openItems();
 });
 const modal=$('#modal'),modalCard=$('#modalBody'),sheet=$('#sheet'),sheetBody=$('#sheetBody');
 let modalAct=null;
@@ -1521,6 +1521,16 @@ function openGameCard(g){
     <div class="row"><button class="btn mint big" data-act="play">${g.world?'Войти':'Играть'}</button><button class="btn big" data-act="later">Позже</button></div>`,
     {onAct:a=>{if(a==='play')enterGame(g.id);else closeModal();}});
 }
+/* Parental gate (App Store Kids / Google Families): an adult answers a multiplication before opening settings. */
+let gateOK=0;
+function parentGate(next){
+  if(Date.now()-gateOK<5*60e3){next();return;}
+  const a=6+Math.floor(Math.random()*4),b=6+Math.floor(Math.random()*4),r=a*b;
+  const opts=new Set([r]);while(opts.size<4){const d=r+(Math.floor(Math.random()*9)-4)*(Math.random()<.5?1:a);if(d>20&&d!==r)opts.add(d);}
+  const list=[...opts].sort(()=>Math.random()-.5);
+  openModal(`<div class="card-ico">🛡️</div><h2>Только для взрослых</h2><p class="muted">Чтобы открыть настройки, реши пример:</p><h2>${a} × ${b} = ?</h2><div class="row">${list.map(v=>`<button class="btn" data-act="g${v}">${v}</button>`).join('')}</div><div class="row"><button class="btn sun" data-act="close">Назад</button></div>`,
+    {onAct:x=>{if(x==='g'+r){gateOK=Date.now();next();}else if(x&&x[0]==='g'){closeModal();toast('Попроси взрослого помочь 🙂');}else closeModal();}});
+}
 function openParents(){
   const render=(confirmReset)=>openModal(`<div class="card-ico">🛡️</div><h2>Для родителей</h2>
     <ul class="rules">
@@ -1539,7 +1549,7 @@ function openParents(){
       else if(a==='sound'){S.sound=!S.sound;save();render(false);}
       else if(a==='reset')render(true);
       else if(a==='logout')cloudLogout();
-      else if(a==='delacc')openModal(`<div class="card-ico">🗑️</div><h2>Удалить игрока навсегда?</h2><p class="muted">Монеты, питомцы, одежда и дом удалятся с сервера. Это нельзя отменить.</p><div class="row"><button class="btn coral" data-act="del2">Да, удалить</button><button class="btn" data-act="keep">Отмена</button></div>`,{onAct:async b=>{if(b==='del2'){try{await CLOUD.sb.rpc('delete_my_account');}catch(e){}try{localStorage.removeItem(KEY);}catch(e){}cloudLogout();}else openParents();}});
+      else if(a==='delacc')openModal(`<div class="card-ico">🗑️</div><h2>Удалить игрока навсегда?</h2><p class="muted">Монеты, питомцы, одежда и дом удалятся с сервера. Это нельзя отменить.</p><div class="row"><button class="btn coral" data-act="del2">Да, удалить</button><button class="btn" data-act="keep">Отмена</button></div>`,{onAct:async b=>{if(b==='del2'){let ok=false;try{const r=await CLOUD.sb.rpc('delete_my_account');ok=!r.error;}catch(e){}if(!ok){closeModal();toast('Не получилось удалить. Проверь интернет и попробуй ещё раз');return;}try{localStorage.removeItem(KEY);}catch(e){}cloudLogout();toast('Игрок удалён');}else openParents();}});
       else if(a==='keep')render(false);
       else if(a==='reset2'){try{localStorage.removeItem(KEY);}catch(e){}Object.assign(S,{coins:40,pets:[],owned:[],wins:{},nick:randomNick(),genderChosen:false,home:null});S.look=normLook({});player.setLook(S.look);save();updateCoins();closeModal();askGender();}
       else closeModal();

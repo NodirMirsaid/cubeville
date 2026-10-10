@@ -25,11 +25,12 @@ head=('<!doctype html><html lang="ru"><head><meta charset="utf-8">'
       '<meta name="apple-mobile-web-app-title" content="Cubeville">'
       '<style>html,body{margin:0;height:100%}:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>'
       '</head><body>')
-V='2'  # bump on every release so phones don't keep an old cached copy
+V='3'  # bump on every release so phones don't keep an old cached copy
 libs=(f'<script src="config.js?v={V}"></script>'
       f'<script src="supabase.js?v={V}"></script>')  # supabase-js 2.45.4 UMD, self-hosted (CDN may be blocked)
 i=game.index('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/')
-out=head+game[:i]+libs+game[i:]+'</body></html>'
+CDN3='<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>'
+out=head+game[:i]+libs+game[i:].replace(CDN3,f'<script src="three.min.js?v={V}"></script>',1)+'</body></html>'
 (root/'site').mkdir(exist_ok=True)
 (root/'site'/'index.html').write_text(out,encoding='utf-8')
 cfg=root/'site'/'config.js'
